@@ -1,0 +1,26 @@
+#include QMK_KEYBOARD_H
+
+#include "joystick.h"
+
+#ifndef ADC_PIN
+#    define ADC_PIN1 F4
+#    define ADC_PIN2 F5
+#endif
+
+
+
+void matrix_scan_user() {
+    int16_t val = (((uint32_t)timer_read() % 5000 - 2500) * 255) / 5000;
+
+    if (val != joystick_status.axes[1]) {
+        joystick_status.axes[1] = val;
+        joystick_status.status |= JS_UPDATED;
+    }
+}
+
+
+joystick_config_t joystick_axes[JOYSTICK_AXES_COUNT] = {
+    [0] = JOYSTICK_AXIS_IN(ADC_PIN1, 900, 575, 285),
+    [1] = JOYSTICK_AXIS_IN(ADC_PIN2, 900, 575, 285),
+};
+#ifdef ANALOG_JOYSTICK_ENABLE
