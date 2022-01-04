@@ -47,7 +47,7 @@ def addLayers(layoutFileName, layoutData):
 	layoutFile.write('\n' + '};')
 
 
-print('Type in the layout-filename: (just ENTER for default is layout.json)')
+print('Type in the layout-filename: (just ENTER for default is /home/nox/Downloads/handwired_dactyl_manuform_4x6_layout_mine.json)')
 fileName = input()
 
 if(len(fileName)==0):

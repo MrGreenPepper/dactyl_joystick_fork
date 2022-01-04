@@ -66,47 +66,39 @@ void matrix_scan_user() {
         lastCursor = timer_read();
      
 
-		if (axisCoordinate(xPin, xOrigin) < 51) {
-			tap_code(KC_RIGHT);
+		if (axisCoordinate(xPin, xOrigin) < 40) {
+			tap_code(KC_UP);
 
 			if (axisCoordinate(xPin, xOrigin) < 1) {
-				tap_code(KC_RIGHT);
-				tap_code(KC_RIGHT);
-				tap_code(KC_RIGHT);
+				tap_code(KC_UP);
+
 			}
 
 		}
 
-		if (axisCoordinate(xPin, xOrigin) > 55) {
-			tap_code(KC_LEFT);
+		if (axisCoordinate(xPin, xOrigin) > 60) {
+			tap_code(KC_DOWN);
 
 			if (axisCoordinate(xPin, xOrigin) > 99) {
-				tap_code(KC_LEFT);
-				tap_code(KC_LEFT);
-				tap_code(KC_LEFT);
+				tap_code(KC_DOWN);
+
 			}
 		}
 
-		if (axisCoordinate(yPin, yOrigin) < 47) {
-			tap_code(KC_UP);
+		if (axisCoordinate(yPin, yOrigin) < 40) {
+			tap_code(KC_RIGHT);
 				if (axisCoordinate(yPin, yOrigin) < 1) {
-					tap_code(KC_UP);
-					tap_code(KC_UP);
-					tap_code(KC_UP);
-					tap_code(KC_UP);
-					tap_code(KC_UP);
+					tap_code(KC_RIGHT);
+
 				}
 
  		}
 
-		if (axisCoordinate(yPin, yOrigin) > 51) {
-			tap_code(KC_DOWN);
+		if (axisCoordinate(yPin, yOrigin) > 60) {
+			tap_code(KC_LEFT);
 				if (axisCoordinate(yPin, yOrigin) > 99) {
-					tap_code(KC_DOWN);
-					tap_code(KC_DOWN);
-					tap_code(KC_DOWN);
-					tap_code(KC_DOWN);
-					tap_code(KC_DOWN);
+					tap_code(KC_LEFT);
+	
 				}
  		}
  	}
