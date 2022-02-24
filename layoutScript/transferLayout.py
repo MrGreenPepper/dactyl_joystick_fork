@@ -46,12 +46,12 @@ def addLayers(layoutFileName, layoutData):
 
 	layoutFile.write('\n' + '};')
 
-
-print('Type in the layout-filename: (just ENTER for default is /home/nox/Downloads/handwired_dactyl_manuform_4x6_layout_mine.json)')
+originalFileName = '/home/nox/Downloads/handwired_dactyl_manuform_4x6_layout_mine.json';
+print('Type in the layout-filename: (just ENTER for default is' + originalFileName + ' )')
 fileName = input()
 
 if(len(fileName)==0):
-	fileName = '/home/nox/Downloads/handwired_dactyl_manuform_4x6_layout_mine.json'
+	fileName = originalFileName;
 
 print('gonna use this file:', fileName)
 
