@@ -69,37 +69,37 @@ void matrix_scan_user() {
 		if (axisCoordinate(xPin, xOrigin) < 40) {
 			tap_code(KC_UP);
 
-			if (axisCoordinate(xPin, xOrigin) < 1) {
+		/*	if (axisCoordinate(xPin, xOrigin) < 1) {
 				tap_code(KC_UP);
 
-			}
+			}*/
 
 		}
 
 		if (axisCoordinate(xPin, xOrigin) > 60) {
 			tap_code(KC_DOWN);
 
-			if (axisCoordinate(xPin, xOrigin) > 99) {
+	/*		if (axisCoordinate(xPin, xOrigin) > 99) {
 				tap_code(KC_DOWN);
 
-			}
+			}*/
 		}
 
 		if (axisCoordinate(yPin, yOrigin) < 40) {
 			tap_code(KC_RIGHT);
-				if (axisCoordinate(yPin, yOrigin) < 1) {
+				/*if (axisCoordinate(yPin, yOrigin) < 1) {
 					tap_code(KC_RIGHT);
 
-				}
+				}*/
 
  		}
 
 		if (axisCoordinate(yPin, yOrigin) > 60) {
 			tap_code(KC_LEFT);
-				if (axisCoordinate(yPin, yOrigin) > 99) {
+				/*if (axisCoordinate(yPin, yOrigin) > 99) {
 					tap_code(KC_LEFT);
 	
-				}
+				}*/
  		}
  	}
 }
