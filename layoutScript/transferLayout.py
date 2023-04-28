@@ -1,85 +1,30 @@
 import json
+from config import getPaths
+from writeBasicChipData import writeBasicData
+from layoutConfigurator import addLayers
+
+paths = getPaths()
+filePath_newLayout_default = defaultValues['filepath_newlayout']
+filePath_keymap = defaultValues['filepath_keymap']
 
 
 
-def writeBasicData(layoutFileName):
-	with open ("basicData.c", "r") as myfile:
-  	  	basicData=myfile.readlines()
-
-	layerFile = open(layoutFileName, 'w')
-	layerFile.close()
-
-	layerFile = open(layoutFileName, 'a')
-	for basicLine in basicData:
-		layerFile.write(basicLine)
-	layerFile.close()
-
-def addLayers(layoutFileName, layoutData):
-	layoutCount = len(layoutData['layers'])
-	layoutName = layoutData['layout']
-
-	layoutFile = open(layoutFileName, 'a')
-	for layer in range(layoutCount):
-		layoutFile.write('#define layer' + str(layer) + ' '+ str(layer)+ '\n')
-
-	layoutFile.write('const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {')
-
-	for layer in range(layoutCount):
 
 
-		layoutHeader = '\n' + '[layer' + str(layer) + '] = ' + layoutName + '(' + '\n'
-		currentLayer = layoutHeader 
+#if the user set up a new path change the default path
+if(len(filePath_newLayout_input)!=0):
+	filePath_newLayout_default = filePath_newLayout_input
 
-		layerData = layoutData['layers'][layer]
-		for dataNumber in range(len(layerData)):
-			if(dataNumber + 1 == len(layerData)):
-				currentLayer += layerData[dataNumber]
-			else:	
-				currentLayer += layerData[dataNumber] + ', '
+print('gonna use this file:', filePath_newLayout_input)
 
-		
-		if(layer + 1 == layoutCount):
-			currentLayer += ')'
-		else:	
-			currentLayer += '),'
-		layoutFile.write(currentLayer)
+#write basic chip data, like keymap, joystick pins etc.
+writeBasicData(filePath_keymap)
 
-	layoutFile.write('\n' + '};')
+#add layout layers to the data
 
-originalFileName = '/home/nox/Downloads/handwired_dactyl_manuform_4x6_layout_mine.json';
-print('Type in the layout-filename: (just ENTER for default is' + originalFileName + ' )')
-fileName = input()
 
-if(len(fileName)==0):
-	fileName = originalFileName;
-
-print('gonna use this file:', fileName)
-
-layoutFileName = '/home/nox/qmk_firmware/keyboards/handwired/dactyl_manuform/4x6/keymaps/joystick/keymap.c'
-
-writeBasicData(layoutFileName)
-
-with open(fileName) as f:
+with open(filePath_newLayout_default) as f:
   layoutData = json.load(f)
 
-addLayers(layoutFileName, layoutData)
-
-
-
-
-
-
-layerFile = open('layout.c', 'a')
-	
-
-
-
-
-
-
-
-
-
-layerFile.close()
-
+addLayers(filePath_keymap, layoutData)
 

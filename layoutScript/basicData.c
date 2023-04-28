@@ -2,8 +2,6 @@
 
 #include "analog.h"
 
-
-
 uint8_t xPin  = F5;
 uint8_t yPin  = F4;   // VRy // B5
 uint8_t swPin = D1;  // SW
@@ -54,20 +52,18 @@ int16_t axisCoordinate(uint8_t pin, uint16_t origin) {
         return 0;
     } else if (coordinate > 100) {
         return 100 * direction;
-    } else {
+		 } else {
         return coordinate * direction;
     }
 }
 
  
-
 void matrix_scan_user() {
  if (timer_elapsed(lastCursor) > cursorTimeout) {
         lastCursor = timer_read();
      
 
-
-		if (axisCoordinate(xPin, xOrigin) < 48 && axisCoordinate(yPin, yOrigin) > 52) {
+		if (axisCoordinate(xPin, xOrigin) < 40) {
 			tap_code(KC_UP);
 
 		/*	if (axisCoordinate(xPin, xOrigin) < 1) {
@@ -77,7 +73,7 @@ void matrix_scan_user() {
 
 		}
 
-		if (axisCoordinate(xPin, xOrigin) > 52	&&	axisCoordinate(yPin, yOrigin) < 48) {
+		if (axisCoordinate(xPin, xOrigin) > 60) {
 			tap_code(KC_DOWN);
 
 	/*		if (axisCoordinate(xPin, xOrigin) > 99) {
@@ -86,7 +82,7 @@ void matrix_scan_user() {
 			}*/
 		}
 
-		if (axisCoordinate(yPin, yOrigin) < 48 && axisCoordinate(xPin, xOrigin) < 48) {
+		if (axisCoordinate(yPin, yOrigin) < 40) {
 			tap_code(KC_RIGHT);
 				/*if (axisCoordinate(yPin, yOrigin) < 1) {
 					tap_code(KC_RIGHT);
@@ -95,7 +91,7 @@ void matrix_scan_user() {
 
  		}
 
-		if (axisCoordinate(yPin, yOrigin) > 52 && axisCoordinate(xPin, xOrigin) > 52) {
+		if (axisCoordinate(yPin, yOrigin) > 60) {
 			tap_code(KC_LEFT);
 				/*if (axisCoordinate(yPin, yOrigin) > 99) {
 					tap_code(KC_LEFT);
@@ -104,4 +100,3 @@ void matrix_scan_user() {
  		}
  	}
 }
-
