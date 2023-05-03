@@ -6,13 +6,37 @@ Special thanks to the qmk developers and the concerned discord community for cod
 
 Feel free to ask anything.
 
-Data overview:
+table of content
 
-3d_models containing the models for a 3d printer
-layouts containing the example layouts - recommend the final.json
-layoutScript combines your layout with the algorithms for the joystick
-pictures some example pictures
+| directory    | description                                               |
+| ------------ | --------------------------------------------------------- |
+| 3d_models    | containing the models for a 3d printer                    |
+| layoutScript | combines your layout with the algorithms for the joystick |
+| pictures     | some example pictures                                     |
 
 Guide:
 
+1. adjust the signing of your chip pins
+   Go to the [basicData.c](/layoutScript/basicData.c) file. At the start of the file you can see the declaration of 3 variables (xPin, yPin, swPin).
+   They are used to receive the inputs from the joystick. Change the values of the variables xPin, yPin and swPin according to how you wired your chip
+   (most likely you can find the signing code of the pins on your chip itself or you need to search your chip layout on the internet).
+2. Configurate your keyboard layout
+   Go to the [qmk layout configurator](https://config.qmk.fm/#/handwired/dactyl_manuform/4x6/LAYOUT) website. Setup your layout and download the JSON-file.
+   Don't compile it! Just download the layout.
+   (2.1 lay up your own qmk keymap - not needed but recommended)
+   Go to the qmk_firmware directory. Then dive into the ./keyboards/handwired/dactyl_manuform/4x6/keymaps/ directory.
+   Copy the default layout directory into a second directory named by you.
+3. Setup the filepaths
+   Go to [config.ini](/layoutScript/config.ini). Setup the filepaths.
+   The 'filepath_keymap' variable should point to the keymap.c file in your qmk keymap directory (see step 2.1).
+   The 'filepath_layout' variable should point to your, already downloaded, layout json-file.
+4. run the [transferLayout.py](/layoutScript/transferLayout.py) file
+   Please make sure to open the (layoutScript)[/layoutScript] directory first and run the file from here to avoid errors with relativ paths.
+5. flash the chip
+   Run the concerning qmk flash command.
+   For example: qmk flash /handwired/dactyl_manuform/4x6/ --keymap joystick
+
 How does it work?:
+
+1. the transferLayout script writes the basic chip data (basicData.c) into the qmk file (keymap.c)
+2. the script appends the qmk keymap.c with the layout data
