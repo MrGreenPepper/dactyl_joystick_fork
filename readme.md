@@ -36,10 +36,10 @@ The 'filepath_layout' variable should point to your, already downloaded, layout 
 Please make sure to open the (layoutScript)[/layoutScript] directory first and run the file from here to avoid errors with relativ paths.
 
 **6. flash the chip**<br>
-Run the concerning qmk flash command:
-_qmk flash -kb [keyboard] -km [keymap]_
-For example in my case it would be (with step 4.1.):
-qmk flash -kb handwired/dactyl_manuform/4x6 -km joystick
+Run the concerning qmk flash command:<br>
+_qmk flash -kb [keyboard] -km [keymap]_ <br>
+For example in my case it would be (with step 4.1.):<br>
+qmk flash -kb handwired/dactyl_manuform/4x6 -km joystick<br>
 
 # How does it work?:
 
