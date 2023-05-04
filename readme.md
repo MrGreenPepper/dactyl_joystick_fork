@@ -29,7 +29,7 @@ Copy the default layout directory into a second directory named by you.)_
 
 **4. Setup the filepaths**<br>
 Go to [config.ini](/layoutScript/config.ini). Setup the filepaths.
-The 'filepath_keymap' variable should point to the keymap.c file in your qmk keymap directory (see step 4.1).
+The 'filepath_keymap' variable should point to the keymap.c file in your qmk keymap directory (see step 3.1).
 The 'filepath_layout' variable should point to your, already downloaded, layout json-file.
 
 **5. run the [transferLayout.py](/layoutScript/transferLayout.py) file**<br>
@@ -38,7 +38,7 @@ Please make sure to open the (layoutScript)[/layoutScript] directory first and r
 **6. flash the chip**<br>
 Run the concerning qmk flash command:
 _qmk flash -kb [keyboard] -km [keymap]_
-For example in my case it would be (with step 2.1.):
+For example in my case it would be (with step 4.1.):
 qmk flash -kb handwired/dactyl_manuform/4x6 -km joystick
 
 # How does it work?:
@@ -48,8 +48,8 @@ qmk flash -kb handwired/dactyl_manuform/4x6 -km joystick
 
 # Data overview
 
-| directory    | description                                               |
-| ------------ | --------------------------------------------------------- |
-| 3d_models    | containing the models for a 3d printer                    |
-| layoutScript | combines your layout with the algorithms for the joystick |
-| pictures     | some example and workflow pictures                        |
+| directory                      | description                                               |
+| ------------------------------ | --------------------------------------------------------- |
+| [3d_models](/3d_models/)       | containing the models for a 3d printer                    |
+| [layoutScript](/layoutScript/) | combines your layout with the algorithms for the joystick |
+| [pictures](/pictures/)         | some example and workflow pictures                        |
