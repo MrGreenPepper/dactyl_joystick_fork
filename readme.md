@@ -6,7 +6,7 @@ Special thanks to the qmk developers and the concerned discord community for cod
 
 Feel free to ask anything.
 
-<img src="../pictures/IMG_5064.jpg">
+![keyboard image](/pictures/IMG_5064.JPG)
 
 # table of content
 
