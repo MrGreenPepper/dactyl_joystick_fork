@@ -22,10 +22,10 @@ They are used to receive the inputs from the joystick. Change the values of the 
 
 **3. Configurate your keyboard layout**<br>
 Go to the [qmk layout configurator](https://config.qmk.fm/#/handwired/dactyl_manuform/4x6/LAYOUT) website. Setup your layout and download the JSON-file.
-Don't compile it! Just download the layout.
-_(3.1. lay up your own qmk keymap - not needed but recommended)
+Don't compile it! Just download the layout.<br>
+_(3.1. lay up your own qmk keymap - not needed but recommended <br>
 Go to the qmk_firmware directory. Then dive into the ./keyboards/handwired/dactyl_manuform/4x6/keymaps/ directory.
-Copy the default layout directory into a second directory named by you._
+Copy the default layout directory into a second directory named by you.)_
 
 **4. Setup the filepaths**<br>
 Go to [config.ini](/layoutScript/config.ini). Setup the filepaths.
