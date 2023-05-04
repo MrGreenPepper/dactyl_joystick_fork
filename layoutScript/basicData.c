@@ -2,6 +2,7 @@
 
 #include "analog.h"
 
+//insert the signings of your chip pins for your joystick here
 uint8_t xPin  = F5;
 uint8_t yPin  = F4;   // VRy // B5
 uint8_t swPin = D1;  // SW
