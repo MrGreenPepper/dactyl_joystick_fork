@@ -6,9 +6,11 @@
 
 this is my own little fork of the **dactyl manuform 4x6 keyboard** modified with a joystick. This repository describes only the changes necessary for a joystick. For the rest please look up at the building guides for the original dactyl manuform keyboards (the size (4x6, 5x6, ...) doesn't really matter, the principles are the same just make sure your chip is supported and have enough pins).
 
-Special thanks to the qmk developers and the concerning discord community for code and help.
+Feel free to ask anything.<br>
 
-Feel free to ask anything.
+**Special thanks to:**
+[Leopold Dietrich](https://www.leopold-dietrich.de/) for help with the 3D prints.
+And to the [qmk developers](https://github.com/qmk/qmk_firmware) and the concerning [discord community](https://discord.com/invite/Uq7gcHh) for code and help.
 
 # Guide:
 
@@ -32,10 +34,10 @@ Go to [config.ini](/layoutScript/config.ini). Setup the filepaths.
 The 'filepath_keymap' variable should point to the keymap.c file in your qmk keymap directory (see step 3.1).
 The 'filepath_layout' variable should point to your, already downloaded, layout json-file.
 
-**5. run the [transferLayout.py](/layoutScript/transferLayout.py) file**<br>
+**5. Run the [transferLayout.py](/layoutScript/transferLayout.py) file**<br>
 Please make sure to open the (layoutScript)[/layoutScript] directory first and run the file from here to avoid errors with relativ paths.
 
-**6. flash the chip**<br>
+**6. Flash the chip**<br>
 Run the concerning qmk flash command:<br>
 _qmk flash -kb [keyboard] -km [keymap]_ <br>
 For example in my case it would be (with step 4.1.):<br>
