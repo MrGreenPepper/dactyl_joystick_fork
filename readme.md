@@ -1,7 +1,7 @@
 <div>
 <img src="/pictures/IMG_5070.JPG" alt="keyboard image"  style="align: left; margin-right: 10px; margin-bottom: 10px; width: 98vw;">
 </div>
-
+<br>
 **Hi,**
 
 this is my own little fork of the **dactyl manuform 4x6 keyboard** modified with a joystick. This repository describes only the changes necessary for a joystick. For the rest please look up at the building guides for the original dactyl manuform keyboards (the size (4x6, 5x6, ...) doesn't really matter, the principles are the same just make sure your chip is supported and have enough pins).
@@ -12,6 +12,7 @@ Feel free to ask anything.<br>
 [Leopold Dietrich](https://www.leopold-dietrich.de/) for help with the 3D prints.<br>
 The [qmk developers](https://github.com/qmk/qmk_firmware) and the concerning [discord community](https://discord.com/invite/Uq7gcHh) for code and help.
 
+<br>
 # Guide:
 
 **1. Get the qmk firmware**<br>
