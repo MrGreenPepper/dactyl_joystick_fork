@@ -10,7 +10,7 @@ Feel free to ask anything.<br>
 
 **Special thanks to:**<br>
 [Leopold Dietrich](https://www.leopold-dietrich.de/) for help with the 3D prints.<br>
-And to the [qmk developers](https://github.com/qmk/qmk_firmware) and the concerning [discord community](https://discord.com/invite/Uq7gcHh) for code and help.
+The [qmk developers](https://github.com/qmk/qmk_firmware) and the concerning [discord community](https://discord.com/invite/Uq7gcHh) for code and help.
 
 # Guide:
 
