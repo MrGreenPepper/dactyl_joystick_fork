@@ -1,13 +1,17 @@
+import json
 
-def addLayers(layoutFileName, layoutData):
+def addLayers(paths):
+	with open(paths['filepath_layout']) as f:
+		layoutData = json.load(f)
+
 	layoutCount = len(layoutData['layers'])
 	layoutName = layoutData['layout']
 
-	layoutFile = open(layoutFileName, 'a')
+	keymapFile = open(paths['filepath_keymap'], 'a')
 	for layer in range(layoutCount):
-		layoutFile.write('#define layer' + str(layer) + ' '+ str(layer)+ '\n')
+		keymapFile.write('#define layer' + str(layer) + ' '+ str(layer)+ '\n')
 
-	layoutFile.write('const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {')
+	keymapFile.write('const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {')
 
 	for layer in range(layoutCount):
 
@@ -27,7 +31,7 @@ def addLayers(layoutFileName, layoutData):
 			currentLayer += ')'
 		else:	
 			currentLayer += '),'
-		layoutFile.write(currentLayer)
+		keymapFile.write(currentLayer)
 
-	layoutFile.write('\n' + '};')
-	layoutFile.close()
+	keymapFile.write('\n' + '};')
+	keymapFile.close()

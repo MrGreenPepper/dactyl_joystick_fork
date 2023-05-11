@@ -40,7 +40,7 @@ Please make sure to open the (layoutScript)[/layoutScript] directory first and r
 **6. Flash the chip**<br>
 Run the concerning qmk flash command:<br>
 _qmk flash -kb [keyboard] -km [keymap]_ <br>
-For example in my case it would be (with step 4.1.):<br>
+For example in my case it would be (with step 3.1.):<br>
 qmk flash -kb handwired/dactyl_manuform/4x6 -km joystick<br>
 
 # How does it work?:

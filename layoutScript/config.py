@@ -28,13 +28,6 @@ def getDefaultPaths(filename='config.ini', section='defaultPaths'):
 			defaultPaths[param[0]] = param[1]
 	else:
 		raise Exception('Section {0} not found in the {1} file'.format(section, filename))	
-	filepath_keymap = defaultPaths['filepath_keymap']
-	filepath_layout = defaultPaths['filepath_layout']
-	systemPath = getSystemPath()
-	defaultPaths['filepath_keymap'] = os.path.join(systemPath, filepath_keymap)
-	defaultPaths['filepath_layout'] = os.path.join(BASEDIR, filepath_layout)
-	test1 = os.path.join(systemPath, filepath_keymap)
-	test2 = os.path.join(BASEDIR, filepath_layout)
 
 	return defaultPaths
 
@@ -42,16 +35,16 @@ def getPaths():
 	defaultPaths = getDefaultPaths()
 
 	print('DefaultPaths are:')
-	print('qmk firmware path:\t', defaultPaths['qmk_path'])
+	print('path to the conerning keymap (in the qmk_firmware):\t', defaultPaths['filepath_keymap'])
 	print('Type in a new path or just ENTER for using the default one')
 	newPath_qmk = input() 
-	if(newPath_qmk.len() != 0):
-		defaultPaths['qmk_path'] = newPath_qmk
+	if(len(newPath_qmk) != 0):
+		defaultPaths['filepath_keymap'] = newPath_qmk
 
-	print('qmk firmware path:\t', getDefaultPaths['filepath_layout'])
+	print('qmk firmware path:\t', defaultPaths['filepath_layout'])
 	print('Type in a new path or just ENTER for using the default one')
 	newPath_layout = input() 
-	if(newPath_qmk.len() != 0):
+	if(len(newPath_layout) != 0):
 		defaultPaths['filepath_layout'] = newPath_layout
 
 
