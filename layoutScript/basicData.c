@@ -35,6 +35,8 @@ int16_t axisCoordinate(uint8_t pin, uint16_t origin) {
 
     int16_t position = analogReadPin(pin);
 
+
+
     if (origin == position) {
         return 0;
     } else if (origin > position) {
@@ -61,8 +63,50 @@ int16_t axisCoordinate(uint8_t pin, uint16_t origin) {
  
 void matrix_scan_user() {
  if (timer_elapsed(lastCursor) > cursorTimeout) {
-        lastCursor = timer_read();
-     
+	lastCursor = timer_read();
+	bool potentioMeterTesting = false;
+
+	if(potentioMeterTesting == true){
+		int16_t position = analogReadPin(xPin) ;
+		int num = (int)position;
+		int turns = 0;
+		int keyCodes[5];
+		uint8_t currentCode = KC_A;
+		
+		while(turns < 6) 
+		{
+			int arrayPosition = 4 - turns;
+			if(num > 0){
+
+				int mod = num % 10;  //split last digit from number
+				
+				switch(mod) {
+					case 0: currentCode = KC_0; break;
+					case 1: currentCode = KC_1; break;
+					case 2: currentCode = KC_2; break;
+					case 3: currentCode = KC_3; break;
+					case 4: currentCode = KC_4; break;
+					case 5: currentCode = KC_5; break;
+					case 6: currentCode = KC_6; break;
+					case 7: currentCode = KC_7; break;
+					case 8: currentCode = KC_8; break;
+					case 9: currentCode = KC_9; break;
+				}
+				keyCodes[arrayPosition] = currentCode;
+				num = num / 10;    //divide num by 10. num /= 10 also a valid one 
+			} else {
+				currentCode = KC_SPACE;
+				keyCodes[arrayPosition] = currentCode;
+			}
+			turns++;
+		}
+
+		for(int i = 0; i<5; i++){
+			tap_code(keyCodes[i]);
+		}
+
+
+	} else {
 
 		if (axisCoordinate(xPin, xOrigin) < 40) {
 			tap_code(KC_UP);
@@ -99,5 +143,7 @@ void matrix_scan_user() {
 	
 				}*/
  		}
+
+	}	
  	}
 }
