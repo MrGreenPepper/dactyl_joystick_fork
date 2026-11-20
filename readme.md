@@ -46,7 +46,15 @@ qmk flash -kb handwired/dactyl_manuform/4x6 -km joystick<br>
 # How does it work?:
 
 1. the transferLayout script writes the basic chip data (basicData.c) into the qmk file (keymap.c)
-2. the script appends the qmk keymap.c with the layout data
+2. the script appends the qmk keymap.c with the layout data. The layout from the QMK configurator
+   (standard `LAYOUT` key order) is translated to this keyboard's own matrix wiring via
+   [wiring.json](/layoutScript/wiring.json) (index = key position in the configurator,
+   value = matrix positions `[row, col]`, empty list = key not built in). The keymap is written as a
+   plain matrix, so no custom `LAYOUT` macro is needed.
+
+The current working layout is [layouts/linux_windows_layout.json](/layoutScript/layouts/linux_windows_layout.json);
+it can be imported into the QMK configurator, edited there and exported again.
+The USB cable always goes into the left half (it is detected as left automatically).
 
 # Data overview
 
