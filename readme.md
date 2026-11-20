@@ -17,44 +17,63 @@ The [qmk developers](https://github.com/qmk/qmk_firmware) and the concerning [di
 **1. Get the qmk firmware**<br>
 Go to the [qmk github page](https://github.com/qmk/qmk_firmware), download the firmware and get it running.
 
-**2. adjust the pin varialbes according to your chip**<br>
-Go to the [basicData.c](/layoutScript/basicData.c) file. At the start of the file you can see the declaration of 3 variables (xPin, yPin, swPin).
-They are used to receive the inputs from the joystick. Change the values of the variables xPin, yPin and swPin according to how you wired your chip
-(most likely you can find the signing code of the pins on your chip itself or you need to search your chip layout on the internet).
+**2. Copy the keymap folder into QMK**<br>
+Copy [layoutScript/qmk/4x6/keymaps/joystick](/layoutScript/qmk/4x6/keymaps/joystick/) to
+`~/qmk_firmware/keyboards/handwired/dactyl_manuform/4x6/keymaps/joystick`.
+It contains `config.h`, `rules.mk` (enables the analog driver and Bootmagic) and the generated `keymap.c`.
 
-**3. Configurate your keyboard layout**<br>
-Go to the [qmk layout configurator](https://config.qmk.fm/#/handwired/dactyl_manuform/4x6/LAYOUT) website. Setup your layout and download the JSON-file.
-Don't compile it! Just download the layout.<br>
-_(3.1. lay up your own qmk keymap - not needed but recommended <br>
-Go to the qmk_firmware directory. Then dive into the ./keyboards/handwired/dactyl_manuform/4x6/keymaps/ directory.
-Copy the default layout directory into a second directory named by you.)_
+**3. Adjust the joystick pins and settings**<br>
+At the top of [basicData.c](/layoutScript/basicData.c) set `JOY_X_PIN` and `JOY_Y_PIN` to the analog pins your joystick is wired to.
+The other settings can be tuned to taste:
 
-**4. Setup the filepaths**<br>
-Go to [config.ini](/layoutScript/config.ini). Setup the filepaths.
-The 'filepath_keymap' variable should point to the keymap.c file in your qmk keymap directory (see step 3.1).
-The 'filepath_layout' variable should point to your, already downloaded, layout json-file.
+| setting                 | default | meaning                                                                   |
+| ----------------------- | ------- | ------------------------------------------------------------------------- |
+| `JOY_DEADZONE`          | 15      | dead zone around the center in percent                                    |
+| `JOY_INTERVAL_SLOW`     | 300     | ms between key taps at small deflection                                   |
+| `JOY_INTERVAL_FAST`     | 25      | ms between key taps at full deflection                                    |
+| `JOY_CURVE`             | 3       | response curve: 1 linear, 2 quadratic, 3 cubic (stays slow for longer)    |
+| `JOY_VERTICAL_SLOWDOWN` | 150     | up/down repeats slower than left/right, in percent                        |
+| `JOY_DIAGONAL_RATIO`    | 41      | how strong the weaker axis must be for a diagonal (41 = 8 equal sectors)  |
+| `JOY_ROTATION_DEG`      | 20      | mounting rotation of the joystick, clockwise positive; compensated in software |
+| `JOY_X_NEG` ... `JOY_Y_POS` | arrows | which arrow key each axis direction sends                             |
 
-**5. Run the [transferLayout.py](/layoutScript/transferLayout.py) file**<br>
-Please make sure to open the (layoutScript)[/layoutScript] directory first and run the file from here to avoid errors with relativ paths.
+The center is calibrated automatically when the keyboard is plugged in, so don't touch the joystick while plugging it in.
 
-**6. Flash the chip**<br>
-Run the concerning qmk flash command:<br>
-_qmk flash -kb [keyboard] -km [keymap]_ <br>
-For example in my case it would be (with step 3.1.):<br>
-qmk flash -kb handwired/dactyl_manuform/4x6 -km joystick<br>
+**4. Configure your keyboard layout**<br>
+Go to the [qmk layout configurator](https://config.qmk.fm/#/handwired/dactyl_manuform/4x6/LAYOUT), set up your layout and download the JSON file
+(don't compile it there). You can also import the current layout
+[layouts/linux_windows_layout.json](/layoutScript/layouts/linux_windows_layout.json), edit it and export it again.
+Save it to [layoutScript/layouts](/layoutScript/layouts/).
+
+**5. Set up the file paths**<br>
+In [config.ini](/layoutScript/config.ini) `filepath_keymap` points to the `keymap.c` in your QMK keymap folder and
+`filepath_layout` to the layout JSON. Relative paths are relative to the layoutScript folder.
+
+**6. Run [transferLayout.py](/layoutScript/transferLayout.py)**<br>
+It can be started from any folder; press ENTER twice to use the paths from `config.ini`:<br>
+`python layoutScript/transferLayout.py`
+
+**7. Flash the chip**<br>
+`qmk flash -kb handwired/dactyl_manuform/4x6 -km joystick`<br>
+When `Waiting for USB serial port` appears, unplug the left half and plug it in again while holding the top left key (Esc).
+Bootmagic then starts the bootloader, no reset button needed. Only the left half (with the USB cable) needs to be flashed
+for keymap changes.
+
+**Notes**
+- The USB cable always goes into the left half; it is detected as the left half automatically (no `EE_HANDS`).
+- The joystick only works on the half with the USB cable.
 
 # How does it work?:
 
-1. the transferLayout script writes the basic chip data (basicData.c) into the qmk file (keymap.c)
-2. the script appends the qmk keymap.c with the layout data. The layout from the QMK configurator
-   (standard `LAYOUT` key order) is translated to this keyboard's own matrix wiring via
-   [wiring.json](/layoutScript/wiring.json) (index = key position in the configurator,
-   value = matrix positions `[row, col]`, empty list = key not built in). The keymap is written as a
-   plain matrix, so no custom `LAYOUT` macro is needed.
-
-The current working layout is [layouts/linux_windows_layout.json](/layoutScript/layouts/linux_windows_layout.json);
-it can be imported into the QMK configurator, edited there and exported again.
-The USB cable always goes into the left half (it is detected as left automatically).
+1. The transferLayout script writes the joystick code ([basicData.c](/layoutScript/basicData.c)) into the QMK `keymap.c`.
+2. It appends the layers from the layout JSON. The JSON uses the key order of the QMK configurator (standard `LAYOUT`);
+   [wiring.json](/layoutScript/wiring.json) translates it to this keyboard's own matrix wiring
+   (index = key position in the configurator, value = matrix positions `[row, col]`, empty list = key not built in).
+   The thumb clusters of this build are wired differently from the standard dactyl, which is why this file exists.
+   The keymap is written as a plain matrix, so no custom `LAYOUT` macro is needed.
+3. In the firmware the joystick is read on every scan: the deflection is computed relative to the calibrated center,
+   the mounting rotation is removed, and depending on direction and strength arrow keys are tapped
+   (up to 8 directions, faster the further it is pushed).
 
 # Data overview
 
