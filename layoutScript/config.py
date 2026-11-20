@@ -1,7 +1,7 @@
 from configparser import ConfigParser
 import os  
 
-BASEDIR	= os.getcwd()
+BASEDIR	= os.path.dirname(os.path.abspath(__file__))
 
 
 def getSystemPath():
@@ -29,6 +29,9 @@ def getDefaultPaths(filename='config.ini', section='defaultPaths'):
 	else:
 		raise Exception('Section {0} not found in the {1} file'.format(section, filename))	
 
+	# relative Pfade beziehen sich auf den layoutScript-Ordner
+	for key in defaultPaths:
+		defaultPaths[key] = os.path.join(BASEDIR, os.path.expanduser(defaultPaths[key]))
 	return defaultPaths
 
 def getPaths():
