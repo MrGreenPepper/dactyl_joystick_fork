@@ -1,149 +1,114 @@
 #include QMK_KEYBOARD_H
 
+#include <stdlib.h>
+#include <math.h>
 #include "analog.h"
 
-//insert the signings of your chip pins for your joystick here
-uint8_t xPin  = F5;
-uint8_t yPin  = F4;   // VRy // B5
-uint8_t swPin = D1;  // SW
 
-// Set Parameters
-uint16_t minAxisValue = 0;
-uint16_t maxAxisValue = 1023;
+/* ---------------- Joystick-Konfiguration ---------------- */
 
-int8_t xPolarity = 1;
-int8_t yPolarity = 1;
+#define JOY_X_PIN F5
+#define JOY_Y_PIN F4
 
-uint8_t cursorTimeout = 100;
-uint16_t lastCursor = 0;
+/* Totzone um die Mitte in Prozent (0-100) */
+#define JOY_DEADZONE 15
 
-int16_t xOrigin, yOrigin;
+/* Wiederholintervall in ms: langsam bei kleiner, schnell bei voller Auslenkung */
+#define JOY_INTERVAL_SLOW 300
+#define JOY_INTERVAL_FAST 25
 
+/* Kennlinie: 1 = linear, 2 = quadratisch, 3 = kubisch.
+ * Je höher, desto länger bleibt der Joystick bei kleiner/mittlerer Auslenkung langsam
+ * und wird erst kurz vor dem Anschlag schnell. */
+#define JOY_CURVE 3
 
-void matrix_init_keymap(void) {
-    // init pin? Is needed?
-    // setPinInputHigh(swPin);
-    // Account for drift
-    xOrigin = analogReadPin(xPin);
-    yOrigin = analogReadPin(yPin);
+/* Hoch/Runter langsamer als Links/Rechts, in Prozent des Intervalls.
+ * 100 = gleich schnell, 150 = Hoch/Runter braucht 1,5x so lange pro Schritt. */
+#define JOY_VERTICAL_SLOWDOWN 150
+
+/* Diagonale nur, wenn die schwächere Achse mindestens so stark ist
+ * (in Prozent der stärkeren). 41 entspricht ca. 22,5 Grad -> 8 gleich große Sektoren. */
+#define JOY_DIAGONAL_RATIO 41
+
+/* Einbaudrehung des Joysticks in Grad (im Uhrzeigersinn eingebaut = positiv).
+ * Wird herausgerechnet, damit "intuitiv nach oben" auch oben ergibt.
+ * Wird es schlimmer statt besser, das Vorzeichen umdrehen (-20). 0 = aus. */
+#define JOY_ROTATION_DEG 20
+
+/* Zuordnung: Vorzeichen der Achse -> Taste (wie bisher verdrahtet) */
+#define JOY_X_NEG KC_UP
+#define JOY_X_POS KC_DOWN
+#define JOY_Y_NEG KC_RIGHT
+#define JOY_Y_POS KC_LEFT
+
+static int16_t  xOrigin, yOrigin;
+static uint16_t lastTap = 0;
+
+/* Mitte beim Start kalibrieren (Stick dabei nicht berühren) */
+void keyboard_post_init_user(void) {
+    int32_t xs = 0, ys = 0;
+    for (uint8_t i = 0; i < 16; i++) {
+        xs += analogReadPin(JOY_X_PIN);
+        ys += analogReadPin(JOY_Y_PIN);
+        wait_ms(2);
+    }
+    xOrigin = xs / 16;
+    yOrigin = ys / 16;
 }
 
-int16_t axisCoordinate(uint8_t pin, uint16_t origin) {
-    int8_t  direction;
-    int16_t distanceFromOrigin;
-    int16_t range;
-
-    int16_t position = analogReadPin(pin);
-
-
-
-    if (origin == position) {
-        return 0;
-    } else if (origin > position) {
-        distanceFromOrigin = origin - position;
-        range              = origin - minAxisValue;
-        direction          = -1;
+/* Auslenkung relativ zur Mitte: -100 .. +100 */
+static int8_t axisValue(uint8_t pin, int16_t origin) {
+    int16_t pos = analogReadPin(pin);
+    int32_t v;
+    if (pos >= origin) {
+        int16_t range = 1023 - origin;
+        v = range > 0 ? ((int32_t)(pos - origin) * 100) / range : 0;
     } else {
-        distanceFromOrigin = position - origin;
-        range              = maxAxisValue - origin;
-        direction          = 1;
+        int16_t range = origin;
+        v = range > 0 ? -((int32_t)(origin - pos) * 100) / range : 0;
     }
-
-    float   percent    = (float)distanceFromOrigin / range;
-    int16_t coordinate = (int16_t)(percent * 100);
-    if (coordinate < 0) {
-        return 0;
-    } else if (coordinate > 100) {
-        return 100 * direction;
-		 } else {
-        return coordinate * direction;
-    }
+    if (v > 100) v = 100;
+    if (v < -100) v = -100;
+    return (int8_t)v;
 }
 
- 
-void matrix_scan_user() {
- if (timer_elapsed(lastCursor) > cursorTimeout) {
-	lastCursor = timer_read();
-	bool potentioMeterTesting = false;
+void matrix_scan_user(void) {
+    if (!is_keyboard_master()) return;
 
-	if(potentioMeterTesting == true){
-		int16_t position = analogReadPin(xPin) ;
-		int num = (int)position;
-		int turns = 0;
-		int keyCodes[5];
-		uint8_t currentCode = KC_A;
-		
-		while(turns < 6) 
-		{
-			int arrayPosition = 4 - turns;
-			if(num > 0){
+    int16_t xr = axisValue(JOY_X_PIN, xOrigin);
+    int16_t yr = axisValue(JOY_Y_PIN, yOrigin);
 
-				int mod = num % 10;  //split last digit from number
-				
-				switch(mod) {
-					case 0: currentCode = KC_0; break;
-					case 1: currentCode = KC_1; break;
-					case 2: currentCode = KC_2; break;
-					case 3: currentCode = KC_3; break;
-					case 4: currentCode = KC_4; break;
-					case 5: currentCode = KC_5; break;
-					case 6: currentCode = KC_6; break;
-					case 7: currentCode = KC_7; break;
-					case 8: currentCode = KC_8; break;
-					case 9: currentCode = KC_9; break;
-				}
-				keyCodes[arrayPosition] = currentCode;
-				num = num / 10;    //divide num by 10. num /= 10 also a valid one 
-			} else {
-				currentCode = KC_SPACE;
-				keyCodes[arrayPosition] = currentCode;
-			}
-			turns++;
-		}
+    /* Einbaudrehung herausrechnen (cos/sin werden vom Compiler vorab berechnet) */
+    const int16_t rc = (int16_t)(cos(JOY_ROTATION_DEG * M_PI / 180.0) * 1000);
+    const int16_t rs = (int16_t)(sin(JOY_ROTATION_DEG * M_PI / 180.0) * 1000);
+    int16_t xs = ((int32_t)xr * rc - (int32_t)yr * rs) / 1000;
+    int16_t ys = ((int32_t)xr * rs + (int32_t)yr * rc) / 1000;
+    int8_t x = xs > 100 ? 100 : (xs < -100 ? -100 : xs);
+    int8_t y = ys > 100 ? 100 : (ys < -100 ? -100 : ys);
+    int8_t ax = abs(x);
+    int8_t ay = abs(y);
+    int8_t mag = ax > ay ? ax : ay;
 
-		for(int i = 0; i<5; i++){
-			tap_code(keyCodes[i]);
-		}
+    if (mag < JOY_DEADZONE) return;
 
+    /* Intervall linear zwischen langsam und schnell */
+    /* t = 0..1000 entlang der nutzbaren Auslenkung, dann Kennlinie anwenden */
+    uint32_t t = ((uint32_t)(mag - JOY_DEADZONE) * 1000) / (100 - JOY_DEADZONE);
+    uint32_t c = t;
+    for (uint8_t i = 1; i < JOY_CURVE; i++) c = c * t / 1000;
+    uint16_t interval = JOY_INTERVAL_SLOW - (c * (JOY_INTERVAL_SLOW - JOY_INTERVAL_FAST)) / 1000;
 
-	} else {
+    /* x-Achse = Hoch/Runter: wenn sie dominiert, langsamer wiederholen */
+    if (ax >= ay) interval = (uint32_t)interval * JOY_VERTICAL_SLOWDOWN / 100;
 
-		if (axisCoordinate(xPin, xOrigin) < 40) {
-			tap_code(KC_UP);
+    if (timer_elapsed(lastTap) < interval) return;
+    lastTap = timer_read();
 
-		/*	if (axisCoordinate(xPin, xOrigin) < 1) {
-				tap_code(KC_UP);
+    /* 8 Richtungen: schwächere Achse nur mitnehmen, wenn sie stark genug ist */
+    bool useX = ax >= JOY_DEADZONE && (ax >= ay || (int16_t)ax * 100 >= (int16_t)ay * JOY_DIAGONAL_RATIO);
+    bool useY = ay >= JOY_DEADZONE && (ay >= ax || (int16_t)ay * 100 >= (int16_t)ax * JOY_DIAGONAL_RATIO);
 
-			}*/
-
-		}
-
-		if (axisCoordinate(xPin, xOrigin) > 60) {
-			tap_code(KC_DOWN);
-
-	/*		if (axisCoordinate(xPin, xOrigin) > 99) {
-				tap_code(KC_DOWN);
-
-			}*/
-		}
-
-		if (axisCoordinate(yPin, yOrigin) < 40) {
-			tap_code(KC_RIGHT);
-				/*if (axisCoordinate(yPin, yOrigin) < 1) {
-					tap_code(KC_RIGHT);
-
-				}*/
-
- 		}
-
-		if (axisCoordinate(yPin, yOrigin) > 60) {
-			tap_code(KC_LEFT);
-				/*if (axisCoordinate(yPin, yOrigin) > 99) {
-					tap_code(KC_LEFT);
-	
-				}*/
- 		}
-
-	}	
- 	}
+    if (useX) tap_code(x < 0 ? JOY_X_NEG : JOY_X_POS);
+    if (useY) tap_code(y < 0 ? JOY_Y_NEG : JOY_Y_POS);
 }
+
